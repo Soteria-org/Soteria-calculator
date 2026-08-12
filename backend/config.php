@@ -38,6 +38,11 @@ $DB_PASS = defined('SOTERIA_DB_PASS') ? SOTERIA_DB_PASS : (getenv('SOTERIA_DB_PA
 // backend/README.md's "What this doesn't do yet" section.
 $ALLOWED_ORIGIN = defined('SOTERIA_ALLOWED_ORIGIN') ? SOTERIA_ALLOWED_ORIGIN : (getenv('SOTERIA_ALLOWED_ORIGIN') ?: '*');
 
+// Shared secret migrate.php requires before it will touch the schema.
+// Empty means "not configured" — migrate.php refuses to run rather than
+// defaulting to open, since this is the one endpoint that runs DDL.
+$MIGRATION_TOKEN = defined('SOTERIA_MIGRATION_TOKEN') ? SOTERIA_MIGRATION_TOKEN : (getenv('SOTERIA_MIGRATION_TOKEN') ?: '');
+
 function db(): PDO
 {
     static $pdo = null;

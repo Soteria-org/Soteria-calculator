@@ -3,9 +3,11 @@ name: Deploy backend to InfinityFree
 # Keeps InfinityFree's copy of backend/ in sync with this repo. InfinityFree
 # has no git/SSH access — FTP is the only way in — so "syncing" means: on
 # every push to main that touches backend/, upload the current backend/
-# over FTP, replacing whatever was there. This is what makes the repo the
-# single source of truth instead of someone hand-editing files over FTP
-# and the two silently drifting apart.
+# over FTP, replacing whatever was there, then apply schema.sql over HTTP
+# (InfinityFree has no shell to run a migration command from, so migrate.php
+# IS the migration command — reachable over HTTP instead). This is what
+# makes the repo the single source of truth instead of someone hand-editing
+# files or tables directly and the two silently drifting apart.
 #
 # Requires these repository secrets (Settings → Secrets and variables →
 # Actions) — see backend/README.md → "Hosting on InfinityFree" for where
@@ -13,11 +15,19 @@ name: Deploy backend to InfinityFree
 #   INFINITYFREE_FTP_HOST
 #   INFINITYFREE_FTP_USERNAME
 #   INFINITYFREE_FTP_PASSWORD
-#   INFINITYFREE_FTP_SERVER_DIR   e.g. /htdocs/soteria-api/
+#   INFINITYFREE_FTP_SERVER_DIR   full absolute path, e.g.
+#                                 /home/volNN_N/infinityfree.com/ifN_XXXXXXXX/htdocs/soteria-api/
 #   INFINITYFREE_DB_HOST          e.g. sqlXXX.infinityfree.com
 #   INFINITYFREE_DB_NAME          e.g. if0_XXXXXXXX_soteria_calculator
 #   INFINITYFREE_DB_USER          e.g. if0_XXXXXXXX
 #   INFINITYFREE_DB_PASS
+#   INFINITYFREE_MIGRATION_TOKEN  any random string you generate yourself
+#                                 (e.g. `openssl rand -hex 20`) — shared
+#                                 secret migrate.php requires before it
+#                                 will touch the schema
+#   INFINITYFREE_API_URL          the API's public base URL, e.g.
+#                                 https://your-domain/soteria-api — used
+#                                 only to call migrate.php after deploying
 #
 # Optional:
 #   INFINITYFREE_ALLOWED_ORIGIN   the deployed frontend's exact URL, to
@@ -27,6 +37,9 @@ name: Deploy backend to InfinityFree
 # None of these secrets are ever committed — config.local.php is
 # generated fresh on every run from the secrets above and only ever
 # exists inside this workflow's runner and on InfinityFree itself.
+#
+# If INFINITYFREE_API_URL isn't set yet, the migrate step is skipped
+# (not failed) so the FTP deploy still works while you're getting set up.
 
 on:
   push:
@@ -50,9 +63,11 @@ jobs:
           DB_USER: ${{ secrets.INFINITYFREE_DB_USER }}
           DB_PASS: ${{ secrets.INFINITYFREE_DB_PASS }}
           ALLOWED_ORIGIN: ${{ secrets.INFINITYFREE_ALLOWED_ORIGIN }}
+          MIGRATION_TOKEN: ${{ secrets.INFINITYFREE_MIGRATION_TOKEN }}
         run: |
           php -r '
             $origin = getenv("ALLOWED_ORIGIN");
+            $token = getenv("MIGRATION_TOKEN");
             $lines = [
               "<?php",
               "define(\"SOTERIA_DB_HOST\", " . var_export(getenv("DB_HOST"), true) . ");",
@@ -62,6 +77,9 @@ jobs:
             ];
             if ($origin !== false && $origin !== "") {
               $lines[] = "define(\"SOTERIA_ALLOWED_ORIGIN\", " . var_export($origin, true) . ");";
+            }
+            if ($token !== false && $token !== "") {
+              $lines[] = "define(\"SOTERIA_MIGRATION_TOKEN\", " . var_export($token, true) . ");";
             }
             file_put_contents("backend/config.local.php", implode("\n", $lines) . "\n");
           '
@@ -75,7 +93,21 @@ jobs:
           local-dir: backend/
           server-dir: ${{ secrets.INFINITYFREE_FTP_SERVER_DIR }}
           exclude: |
-            **/schema.sql
             **/README.md
             **/config.local.php.example
             **/.git*
+
+      - name: Apply schema (migrate.php)
+        if: ${{ secrets.INFINITYFREE_API_URL != '' && secrets.INFINITYFREE_MIGRATION_TOKEN != '' }}
+        env:
+          API_URL: ${{ secrets.INFINITYFREE_API_URL }}
+          TOKEN: ${{ secrets.INFINITYFREE_MIGRATION_TOKEN }}
+        run: |
+          response=$(curl -sS -w "\n%{http_code}" -G "$API_URL/migrate.php" --data-urlencode "token=$TOKEN")
+          status="${response##*$'\n'}"
+          body="${response%$'\n'*}"
+          echo "$body"
+          if [ "$status" != "200" ]; then
+            echo "migrate.php returned HTTP $status"
+            exit 1
+          fi

@@ -58,9 +58,12 @@ you never hand-edit files over FTP and let them drift from the repo.
 3. In vPanel, create a MySQL database. InfinityFree auto-prefixes the
    database and username with your account ID (e.g. `if0_12345678_soteria_calculator`
    / `if0_12345678`) — note the exact host, database name, username, and
-   password it shows you.
-4. Open phpMyAdmin from vPanel, select that database, and import
-   `schema.sql` (Import tab → choose file → Go).
+   password it shows you. This step only creates the empty database —
+   the tables come later, from `migrate.php` (step 7), not phpMyAdmin.
+4. Generate a random migration token — anything long and unguessable,
+   e.g. `openssl rand -hex 20` in a terminal. This gates `migrate.php`
+   (the endpoint that creates/updates tables on the live database) so it
+   isn't reachable by anyone who finds the URL.
 5. In vPanel's FTP Accounts section, get FTP credentials and figure out
    `INFINITYFREE_FTP_SERVER_DIR`. **InfinityFree's FTP is not chrooted**
    — the working directory you land in after connecting is a real
@@ -86,27 +89,61 @@ you never hand-edit files over FTP and let them drift from the repo.
      absolute path from step 5)
    - `INFINITYFREE_DB_HOST`, `INFINITYFREE_DB_NAME`,
      `INFINITYFREE_DB_USER`, `INFINITYFREE_DB_PASS` (from step 3)
+   - `INFINITYFREE_MIGRATION_TOKEN` (from step 4)
+   - `INFINITYFREE_API_URL` — the API's public base URL once step 2's
+     HTTPS is live, e.g. `https://your-domain/soteria-api`. This is what
+     lets the workflow call `migrate.php` for you; without it, the
+     workflow still deploys the files but skips creating the tables, and
+     you'd hit a "table doesn't exist" error until you run migrate.php
+     yourself.
    - Optionally `INFINITYFREE_ALLOWED_ORIGIN` — your deployed frontend's
      exact URL, so the API only answers CORS preflight for that origin
      instead of `*`
 7. Push to `main` (or run the workflow manually from the Actions tab —
-   "Deploy backend to InfinityFree" → Run workflow). The workflow
-   generates `backend/config.local.php` from the DB secrets above and
-   FTPs the whole `backend/` folder over.
+   "Deploy backend to InfinityFree" → Run workflow). The workflow:
+   generates `backend/config.local.php` from the secrets above, FTPs the
+   whole `backend/` folder over, then calls `migrate.php` to create the
+   six tables from `schema.sql`. Check the Actions tab for the run's
+   output — the migrate step prints which tables were created.
 8. Confirm it's live: visit
    `https://your-domain/soteria-api/clients.php` — you should see
    `{"clients":[]}`.
 9. On Vercel, set the project's `NEXT_PUBLIC_API_BASE_URL` environment
-   variable to that same base URL and redeploy the frontend.
+   variable to that same base URL (without `/migrate.php` — just the
+   base, e.g. `https://your-domain/soteria-api`) and redeploy the frontend.
 
-**What this doesn't do yet:** there is no authentication on any of these
-endpoints — anyone who knows the API's URL can read and write records.
-That's an acceptable gap while the URL is unpublished and only your team
-knows it, but revisit before relying on this for anything sensitive.
+**Re-running the migration by hand**, if you ever need to (e.g. you
+edited `schema.sql` and want to apply it without a full deploy): visit
+`https://your-domain/soteria-api/migrate.php?token=YOUR_TOKEN` directly,
+or re-run the GitHub Actions workflow. It's always safe to run again —
+every statement in `schema.sql` is `CREATE TABLE IF NOT EXISTS`, so an
+already-migrated database is untouched.
+
+**What this doesn't do yet:** there is no authentication on the CRUD
+endpoints (`clients.php`, `projects.php`, etc.) — anyone who knows the
+API's URL can read and write records. `migrate.php` is the one exception
+(token-gated, since it runs schema changes rather than data changes).
+The CRUD gap is acceptable while the URL is unpublished and only your
+team knows it, but revisit before relying on this for anything sensitive.
 InfinityFree's free tier is also best-effort: expect occasional slowness
 or downtime, and (rarely) an anti-bot interstitial on requests that don't
 look like a normal browser. Fine for testing and internal use; if this
 becomes load-bearing, budget for real hosting.
+
+## Visibility into the database
+
+Two options, depending on what you need:
+
+- **Browse raw tables/rows** — InfinityFree's vPanel links to phpMyAdmin
+  next to your database. That's the tool for "show me every row in
+  `payments`," ad-hoc queries, or fixing a bad record by hand.
+- **Browse it through the app** — `/projects` in the Next.js frontend
+  already lists every saved project with its latest quote status, and
+  each project's detail page shows its quotes, invoices, and payments in
+  one place. `export.php?id=` downloads one project's complete record as
+  JSON. There's no single view listing *all* clients or *all* payments
+  across every project yet — that's the Day 3 dashboard in
+  `../docs/roadmap.md`, not built yet.
 
 ## Endpoints
 
@@ -127,6 +164,7 @@ All responses are JSON. All money fields are UGX, matching the frontend.
 | POST | `payments.php` | Record a payment — auto-issues a receipt and rolls the invoice's status forward |
 | GET | `receipts.php?id=` | Fetch one receipt with its payment/invoice/project/client context, for printing |
 | GET | `export.php?id=` | Download a project's full record (quotes, invoices, payments, receipts) as one JSON file |
+| GET/POST | `migrate.php?token=` | Create/update tables from `schema.sql`. Requires `SOTERIA_MIGRATION_TOKEN`; safe to re-run |
 
 ## Why invoice status is never trusted from the client
 
