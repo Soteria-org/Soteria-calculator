@@ -19,7 +19,7 @@ export default function HomePage() {
       </Link>
       <p className="field-hint mt-6 max-w-md">
         Runs entirely in your browser. Pricing rules live in{" "}
-        <code className="rounded bg-white/5 px-1 py-0.5 text-soteria-muted">
+        <code className="rounded bg-soteria-surfaceHover px-1 py-0.5 text-soteria-muted">
           /config
         </code>{" "}
         — edit them there, not in a spreadsheet, so every future estimate

@@ -99,7 +99,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
               key={opt.value}
               className={`flex-1 cursor-pointer rounded-md border px-3 py-2 text-sm transition-colors ${
                 input.confidence === opt.value
-                  ? "border-soteria-teal bg-soteria-tealSoft text-white"
+                  ? "border-soteria-teal bg-soteria-tealSoft text-soteria-ink"
                   : "border-soteria-border text-soteria-body hover:border-soteria-borderStrong"
               }`}
             >

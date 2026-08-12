@@ -1,11 +1,12 @@
 import type { Config } from "tailwindcss";
 
-// Palette sourced from Soteria's brand kit (logo + colour references) in
-// Bloom. Base hues (bg/navy/teal/gold) are the exact brand values; *Light/
-// *Soft variants are computed tints for hover/selected states, not new
-// hues — see docs/pricing-model.md's sibling, the brand kit itself, for
-// the source images.
+// Colour *names* are Soteria's brand kit (logo + colour references) from
+// Bloom: teal, navy, gold, charcoal. Actual values are CSS custom
+// properties (app/globals.css) so every one of these tokens resolves
+// differently under the light theme (:root) vs the dark theme (.dark) —
+// components never need a `dark:` prefix, the token itself adapts.
 const config: Config = {
+  darkMode: "class",
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
@@ -22,26 +23,27 @@ const config: Config = {
       },
       colors: {
         soteria: {
-          bg: "#1C1D1E",
-          surface: "#242628",
-          surfaceHover: "#2C2F31",
-          border: "rgba(255,255,255,0.08)",
-          borderStrong: "rgba(255,255,255,0.16)",
-          ink: "#FFFFFF",
-          body: "#C7CDD2",
-          muted: "#939CA3",
-          faint: "#6B747C",
-          navy: "#153A5F",
-          navyLight: "#1F5081",
-          navySoft: "rgba(21,58,95,0.35)",
-          teal: "#0F787A",
-          tealLight: "#159C9E",
-          tealSoft: "rgba(15,120,122,0.16)",
-          gold: "#BC9C62",
-          goldLight: "#D4B784",
-          goldSoft: "rgba(188,156,98,0.14)",
-          warn: "#E2725B",
-          warnSoft: "rgba(226,114,91,0.14)",
+          bg: "rgb(var(--soteria-bg) / <alpha-value>)",
+          surface: "rgb(var(--soteria-surface) / <alpha-value>)",
+          surfaceHover: "rgb(var(--soteria-surfaceHover) / <alpha-value>)",
+          border: "var(--soteria-border)",
+          borderStrong: "var(--soteria-borderStrong)",
+          hoverWash: "var(--soteria-hoverWash)",
+          ink: "rgb(var(--soteria-ink) / <alpha-value>)",
+          body: "rgb(var(--soteria-body) / <alpha-value>)",
+          muted: "rgb(var(--soteria-muted) / <alpha-value>)",
+          faint: "rgb(var(--soteria-faint) / <alpha-value>)",
+          navy: "rgb(var(--soteria-navy) / <alpha-value>)",
+          navyLight: "rgb(var(--soteria-navyLight) / <alpha-value>)",
+          navySoft: "var(--soteria-navySoft)",
+          teal: "rgb(var(--soteria-teal) / <alpha-value>)",
+          tealLight: "rgb(var(--soteria-tealLight) / <alpha-value>)",
+          tealSoft: "var(--soteria-tealSoft)",
+          gold: "rgb(var(--soteria-gold) / <alpha-value>)",
+          goldLight: "rgb(var(--soteria-goldLight) / <alpha-value>)",
+          goldSoft: "var(--soteria-goldSoft)",
+          warn: "rgb(var(--soteria-warn) / <alpha-value>)",
+          warnSoft: "var(--soteria-warnSoft)",
         },
       },
     },

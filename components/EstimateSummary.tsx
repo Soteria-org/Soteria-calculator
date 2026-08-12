@@ -11,7 +11,7 @@ interface EstimateSummaryProps {
 }
 
 const confidenceStyles: Record<EstimateConfidence, string> = {
-  high: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300 print:border-emerald-300 print:bg-emerald-50 print:text-emerald-700",
+  high: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-400/40 dark:bg-emerald-400/10 dark:text-emerald-300 print:border-emerald-300 print:bg-emerald-50 print:text-emerald-700",
   medium:
     "border-soteria-gold/40 bg-soteria-goldSoft text-soteria-gold print:border-amber-300 print:bg-amber-50 print:text-amber-700",
   low: "border-soteria-warn/40 bg-soteria-warnSoft text-soteria-warn print:border-rose-300 print:bg-rose-50 print:text-rose-700",
@@ -51,7 +51,7 @@ export function EstimateSummary({
               className={`rounded-l-md px-3 py-1.5 transition-colors ${
                 view === "internal"
                   ? "bg-soteria-navy text-white"
-                  : "bg-transparent text-soteria-muted hover:text-white"
+                  : "bg-transparent text-soteria-muted hover:text-soteria-ink"
               }`}
             >
               Internal
@@ -62,7 +62,7 @@ export function EstimateSummary({
               className={`rounded-r-md px-3 py-1.5 transition-colors ${
                 view === "client"
                   ? "bg-soteria-navy text-white"
-                  : "bg-transparent text-soteria-muted hover:text-white"
+                  : "bg-transparent text-soteria-muted hover:text-soteria-ink"
               }`}
             >
               Client view
@@ -210,7 +210,7 @@ function SummaryTile({
           ? "border-soteria-warn/40 bg-soteria-warnSoft print:border-rose-200 print:bg-rose-50"
           : emphasis
           ? "border-soteria-gold/40 bg-soteria-goldSoft print:border-amber-200 print:bg-amber-50"
-          : "border-soteria-border bg-white/[0.03] print:border-slate-200 print:bg-slate-50"
+          : "border-soteria-border bg-soteria-surfaceHover print:border-slate-200 print:bg-slate-50"
       }`}
     >
       <p className="text-xs text-soteria-muted print:text-slate-500">{label}</p>

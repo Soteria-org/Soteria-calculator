@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SoteriaLogo } from "./SoteriaLogo";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * Persistent brand header shown on every page. No navigation beyond the
@@ -14,9 +15,12 @@ export function SiteHeader() {
         <Link href="/" className="transition-opacity hover:opacity-90">
           <SoteriaLogo className="h-9 w-9" withWordmark />
         </Link>
-        <span className="hidden text-xs font-medium uppercase tracking-[0.14em] text-soteria-faint sm:inline print:hidden">
-          Internal estimation tool
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-xs font-medium uppercase tracking-[0.14em] text-soteria-faint sm:inline print:hidden">
+            Internal estimation tool
+          </span>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
