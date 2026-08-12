@@ -8,13 +8,35 @@ declare(strict_types=1);
 
 // --- Database ---------------------------------------------------------
 //
-// Defaults match a fresh XAMPP install (MySQL on localhost, root, no
-// password). Override via environment variables when this moves to real
-// hosting later — never hardcode production credentials here.
-$DB_HOST = getenv('SOTERIA_DB_HOST') ?: '127.0.0.1';
-$DB_NAME = getenv('SOTERIA_DB_NAME') ?: 'soteria_calculator';
-$DB_USER = getenv('SOTERIA_DB_USER') ?: 'root';
-$DB_PASS = getenv('SOTERIA_DB_PASS') ?: '';
+// Three ways to configure this, checked in order:
+//   1. config.local.php (gitignored — see config.local.php.example).
+//      This is the one that matters on shared hosting like InfinityFree,
+//      where there's no reliable way to set real environment variables
+//      for PHP — SetEnv in .htaccess is not guaranteed to reach getenv()
+//      under every PHP-handler configuration, so don't depend on it.
+//   2. Environment variables (SOTERIA_DB_*) — works under XAMPP, a VPS,
+//      or anywhere you do control the process environment.
+//   3. Defaults matching a fresh XAMPP install (MySQL on localhost, root,
+//      no password).
+//
+// Never hardcode real production credentials directly in this file.
+$localConfig = __DIR__ . '/config.local.php';
+if (file_exists($localConfig)) {
+    require $localConfig;
+}
+
+$DB_HOST = defined('SOTERIA_DB_HOST') ? SOTERIA_DB_HOST : (getenv('SOTERIA_DB_HOST') ?: '127.0.0.1');
+$DB_NAME = defined('SOTERIA_DB_NAME') ? SOTERIA_DB_NAME : (getenv('SOTERIA_DB_NAME') ?: 'soteria_calculator');
+$DB_USER = defined('SOTERIA_DB_USER') ? SOTERIA_DB_USER : (getenv('SOTERIA_DB_USER') ?: 'root');
+$DB_PASS = defined('SOTERIA_DB_PASS') ? SOTERIA_DB_PASS : (getenv('SOTERIA_DB_PASS') ?: '');
+
+// Which frontend origin(s) may call this API. '*' is fine while this is
+// local-only and unreachable from the internet; once the API has a real
+// public host (InfinityFree, etc.), set this to the exact Vercel URL(s)
+// in config.local.php so a random site can't call your write endpoints
+// from a browser. This does NOT replace authentication — see
+// backend/README.md's "What this doesn't do yet" section.
+$ALLOWED_ORIGIN = defined('SOTERIA_ALLOWED_ORIGIN') ? SOTERIA_ALLOWED_ORIGIN : (getenv('SOTERIA_ALLOWED_ORIGIN') ?: '*');
 
 function db(): PDO
 {
@@ -40,15 +62,13 @@ function db(): PDO
 }
 
 // --- CORS ---------------------------------------------------------------
-//
-// The frontend runs on a different origin (Vercel) than this API (local
-// XAMPP for now). Allow-all is fine for local development against a tool
-// nobody outside the team can reach; tighten this to a specific origin
-// once the API has a real, internet-facing host.
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: ' . $ALLOWED_ORIGIN);
 header('Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json; charset=utf-8');
+if ($ALLOWED_ORIGIN !== '*') {
+    header('Vary: Origin');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);

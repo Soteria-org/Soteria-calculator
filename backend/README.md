@@ -30,20 +30,68 @@ over HTTP. They are two codebases in one repo, not one app.
    in `.env.local` (see `.env.local.example` at the repo root).
 
 XAMPP's default MySQL user is `root` with no password, which is what
-`config.php` assumes out of the box. If you changed that, override it
-with environment variables instead of editing `config.php`:
+`config.php` assumes out of the box. If you changed that, override it —
+copy `config.local.php.example` to `config.local.php` in this folder and
+fill in your values. `config.local.php` is gitignored, so real credentials
+never get committed; `config.php` loads it automatically if present.
 
-```
-SOTERIA_DB_HOST=127.0.0.1
-SOTERIA_DB_NAME=soteria_calculator
-SOTERIA_DB_USER=root
-SOTERIA_DB_PASS=your_password
-```
+## Hosting on InfinityFree
 
-(How to set these for Apache/PHP under XAMPP depends on your OS — the
-simplest path is `SetEnv` directives in an `.htaccess` file inside this
-folder, or editing `php.ini`'s `variables_order`/using `putenv()` in a
-`prepend.php` you configure XAMPP to auto-include.)
+[InfinityFree](https://infinityfree.com) gives you free PHP + MySQL
+hosting with no SSH/git access — only FTP and a web control panel
+(vPanel). That shapes how deployment has to work here: there's no way to
+`git pull` on the server, so **the repo and the live site only stay in
+sync if something pushes files to InfinityFree on your behalf.**
+`.github/workflows/deploy-backend.yml` is that something — it FTPs the
+current `backend/` to InfinityFree every time it changes on `main`, so
+you never hand-edit files over FTP and let them drift from the repo.
+
+**One-time setup:**
+
+1. Sign up at InfinityFree and create an account (a free `*.infinityfreeapp.com`
+   subdomain, or point your own domain at it).
+2. **Enable HTTPS** on that domain from vPanel (free, via Let's Encrypt —
+   can take a few hours to provision). This isn't optional: the frontend
+   is served over HTTPS on Vercel, and browsers block a page from calling
+   a plain `http://` API from an `https://` page (mixed content). If the
+   API isn't on HTTPS yet, nothing will work until it is.
+3. In vPanel, create a MySQL database. InfinityFree auto-prefixes the
+   database and username with your account ID (e.g. `if0_12345678_soteria_calculator`
+   / `if0_12345678`) — note the exact host, database name, username, and
+   password it shows you.
+4. Open phpMyAdmin from vPanel, select that database, and import
+   `schema.sql` (Import tab → choose file → Go).
+5. In vPanel's FTP Accounts section, note the FTP host, username, and
+   password. Decide where `backend/` should live under `htdocs/` — e.g.
+   `/htdocs/soteria-api/` — and create that folder if it doesn't exist.
+6. In this GitHub repo, go to **Settings → Secrets and variables →
+   Actions** and add:
+   - `INFINITYFREE_FTP_HOST`, `INFINITYFREE_FTP_USERNAME`,
+     `INFINITYFREE_FTP_PASSWORD`, `INFINITYFREE_FTP_SERVER_DIR`
+     (e.g. `/htdocs/soteria-api/`)
+   - `INFINITYFREE_DB_HOST`, `INFINITYFREE_DB_NAME`,
+     `INFINITYFREE_DB_USER`, `INFINITYFREE_DB_PASS` (from step 3)
+   - Optionally `INFINITYFREE_ALLOWED_ORIGIN` — your deployed frontend's
+     exact URL, so the API only answers CORS preflight for that origin
+     instead of `*`
+7. Push to `main` (or run the workflow manually from the Actions tab —
+   "Deploy backend to InfinityFree" → Run workflow). The workflow
+   generates `backend/config.local.php` from the DB secrets above and
+   FTPs the whole `backend/` folder over.
+8. Confirm it's live: visit
+   `https://your-domain/soteria-api/clients.php` — you should see
+   `{"clients":[]}`.
+9. On Vercel, set the project's `NEXT_PUBLIC_API_BASE_URL` environment
+   variable to that same base URL and redeploy the frontend.
+
+**What this doesn't do yet:** there is no authentication on any of these
+endpoints — anyone who knows the API's URL can read and write records.
+That's an acceptable gap while the URL is unpublished and only your team
+knows it, but revisit before relying on this for anything sensitive.
+InfinityFree's free tier is also best-effort: expect occasional slowness
+or downtime, and (rarely) an anti-bot interstitial on requests that don't
+look like a normal browser. Fine for testing and internal use; if this
+becomes load-bearing, budget for real hosting.
 
 ## Endpoints
 

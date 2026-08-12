@@ -1,3 +1,6 @@
+# Backend real credentials — see backend/config.local.php.example
+backend/config.local.php
+
 # Logs
 logs
 *.log

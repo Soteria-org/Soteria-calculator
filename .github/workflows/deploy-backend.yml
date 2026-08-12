@@ -1,0 +1,81 @@
+name: Deploy backend to InfinityFree
+
+# Keeps InfinityFree's copy of backend/ in sync with this repo. InfinityFree
+# has no git/SSH access — FTP is the only way in — so "syncing" means: on
+# every push to main that touches backend/, upload the current backend/
+# over FTP, replacing whatever was there. This is what makes the repo the
+# single source of truth instead of someone hand-editing files over FTP
+# and the two silently drifting apart.
+#
+# Requires these repository secrets (Settings → Secrets and variables →
+# Actions) — see backend/README.md → "Hosting on InfinityFree" for where
+# each one comes from:
+#   INFINITYFREE_FTP_HOST
+#   INFINITYFREE_FTP_USERNAME
+#   INFINITYFREE_FTP_PASSWORD
+#   INFINITYFREE_FTP_SERVER_DIR   e.g. /htdocs/soteria-api/
+#   INFINITYFREE_DB_HOST          e.g. sqlXXX.infinityfree.com
+#   INFINITYFREE_DB_NAME          e.g. if0_XXXXXXXX_soteria_calculator
+#   INFINITYFREE_DB_USER          e.g. if0_XXXXXXXX
+#   INFINITYFREE_DB_PASS
+#
+# Optional:
+#   INFINITYFREE_ALLOWED_ORIGIN   the deployed frontend's exact URL, to
+#                                 lock down CORS instead of leaving it at
+#                                 '*' — see backend/config.local.php.example
+#
+# None of these secrets are ever committed — config.local.php is
+# generated fresh on every run from the secrets above and only ever
+# exists inside this workflow's runner and on InfinityFree itself.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate config.local.php from secrets
+        env:
+          DB_HOST: ${{ secrets.INFINITYFREE_DB_HOST }}
+          DB_NAME: ${{ secrets.INFINITYFREE_DB_NAME }}
+          DB_USER: ${{ secrets.INFINITYFREE_DB_USER }}
+          DB_PASS: ${{ secrets.INFINITYFREE_DB_PASS }}
+          ALLOWED_ORIGIN: ${{ secrets.INFINITYFREE_ALLOWED_ORIGIN }}
+        run: |
+          php -r '
+            $origin = getenv("ALLOWED_ORIGIN");
+            $lines = [
+              "<?php",
+              "define(\"SOTERIA_DB_HOST\", " . var_export(getenv("DB_HOST"), true) . ");",
+              "define(\"SOTERIA_DB_NAME\", " . var_export(getenv("DB_NAME"), true) . ");",
+              "define(\"SOTERIA_DB_USER\", " . var_export(getenv("DB_USER"), true) . ");",
+              "define(\"SOTERIA_DB_PASS\", " . var_export(getenv("DB_PASS"), true) . ");",
+            ];
+            if ($origin !== false && $origin !== "") {
+              $lines[] = "define(\"SOTERIA_ALLOWED_ORIGIN\", " . var_export($origin, true) . ");";
+            }
+            file_put_contents("backend/config.local.php", implode("\n", $lines) . "\n");
+          '
+
+      - name: Deploy over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.INFINITYFREE_FTP_HOST }}
+          username: ${{ secrets.INFINITYFREE_FTP_USERNAME }}
+          password: ${{ secrets.INFINITYFREE_FTP_PASSWORD }}
+          local-dir: backend/
+          server-dir: ${{ secrets.INFINITYFREE_FTP_SERVER_DIR }}
+          exclude: |
+            **/schema.sql
+            **/README.md
+            **/config.local.php.example
+            **/.git*
