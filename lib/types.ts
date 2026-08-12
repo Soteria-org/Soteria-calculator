@@ -27,7 +27,8 @@ export type FeatureCategory =
   | "business-management"
   | "integrations"
   | "ai"
-  | "advanced";
+  | "advanced"
+  | "engagement";
 
 /** How Soteria treats a recurring provider cost commercially. */
 export type CostTreatment =
@@ -98,6 +99,14 @@ export interface FeatureDefinition {
   /** Feature ids this one assumes are already selected. Informational only in V1. */
   dependsOn?: string[];
   notes?: string;
+  /**
+   * Terms/phrases (lowercase) that indicate a client brief is asking for this
+   * feature, used by the budget-fit assistant (lib/budget-fit.ts) to match
+   * free-text requirements against the catalogue. Deliberately curated by
+   * hand, not inferred from name/description alone — keeps matching
+   * traceable to a decision someone made, not a guess.
+   */
+  keywords?: string[];
 }
 
 // --- config/infrastructure-pricing.ts -----------------------------------

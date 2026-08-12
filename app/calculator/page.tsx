@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ProjectForm } from "@/components/ProjectForm";
+import { BudgetFitPanel } from "@/components/BudgetFitPanel";
 import { FeatureSelector } from "@/components/FeatureSelector";
 import { InfrastructureSelector } from "@/components/InfrastructureSelector";
 import { MaintenanceSelector } from "@/components/MaintenanceSelector";
@@ -54,6 +55,10 @@ export default function CalculatorPage() {
         ? input.selectedFeatureIds.filter((f) => f !== id)
         : [...input.selectedFeatureIds, id],
     });
+  }
+
+  function applyScope(featureIds: string[]) {
+    patch({ selectedFeatureIds: featureIds });
   }
 
   function toggleInfrastructure(id: string) {
@@ -149,6 +154,7 @@ export default function CalculatorPage() {
 
       <div className="space-y-6 print:hidden">
         <ProjectForm input={input} onChange={patch} />
+        <BudgetFitPanel input={input} onApplyScope={applyScope} />
         <FeatureSelector
           selectedIds={input.selectedFeatureIds}
           onToggle={toggleFeature}
