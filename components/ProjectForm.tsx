@@ -17,8 +17,8 @@ const confidenceOptions: { value: EstimateConfidence; label: string }[] = [
 export function ProjectForm({ input, onChange }: ProjectFormProps) {
   return (
     <section className="card p-5">
-      <h2 className="text-base font-semibold text-slate-900">
-        1. Client & project
+      <h2 className="text-base font-semibold text-soteria-ink">
+        1. Client &amp; project
       </h2>
       <p className="field-hint mb-4">
         Who is this for, and how confident are we in what they've told us?
@@ -31,7 +31,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           </label>
           <input
             id="clientName"
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.clientName}
             onChange={(e) => onChange({ clientName: e.target.value })}
             placeholder="e.g. John Baptist"
@@ -43,7 +43,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           </label>
           <input
             id="projectName"
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.projectName}
             onChange={(e) => onChange({ projectName: e.target.value })}
             placeholder="e.g. Gadget Store E-Commerce System"
@@ -55,7 +55,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           </label>
           <input
             id="projectType"
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.projectType}
             onChange={(e) => onChange({ projectType: e.target.value })}
             placeholder="e.g. E-commerce + business management"
@@ -67,7 +67,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           </label>
           <select
             id="complexityLevel"
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.complexityLevel}
             onChange={(e) =>
               onChange({
@@ -76,7 +76,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
             }
           >
             {pricingRules.complexityMultipliers.map((m) => (
-              <option key={m.level} value={m.level}>
+              <option key={m.level} value={m.level} className="bg-soteria-bg">
                 {m.label} (×{m.multiplier.toFixed(2)})
               </option>
             ))}
@@ -97,16 +97,16 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           {confidenceOptions.map((opt) => (
             <label
               key={opt.value}
-              className={`flex-1 cursor-pointer rounded-md border px-3 py-2 text-sm ${
+              className={`flex-1 cursor-pointer rounded-md border px-3 py-2 text-sm transition-colors ${
                 input.confidence === opt.value
-                  ? "border-soteria-accent bg-soteria-accentSoft text-soteria-accent"
-                  : "border-slate-300 text-slate-600"
+                  ? "border-soteria-teal bg-soteria-tealSoft text-white"
+                  : "border-soteria-border text-soteria-body hover:border-soteria-borderStrong"
               }`}
             >
               <input
                 type="radio"
                 name="confidence"
-                className="mr-2"
+                className="mr-2 accent-soteria-teal"
                 checked={input.confidence === opt.value}
                 onChange={() => onChange({ confidence: opt.value })}
               />
@@ -128,7 +128,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           <textarea
             id="assumptions"
             rows={4}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.assumptions.join("\n")}
             onChange={(e) =>
               onChange({
@@ -148,7 +148,7 @@ export function ProjectForm({ input, onChange }: ProjectFormProps) {
           <textarea
             id="risks"
             rows={4}
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+            className="input"
             value={input.risks.join("\n")}
             onChange={(e) =>
               onChange({

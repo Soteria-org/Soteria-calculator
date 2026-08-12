@@ -55,18 +55,19 @@ export default function CalculatorPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between print:hidden">
         <div>
-          <Link href="/" className="text-sm text-soteria-accent hover:underline">
-            ← Soteria Calculator
+          <Link
+            href="/"
+            className="text-sm font-medium text-soteria-teal hover:text-soteria-tealLight hover:underline"
+          >
+            ← Back
           </Link>
-          <h1 className="text-xl font-bold text-slate-900">New estimate</h1>
+          <h1 className="text-xl font-bold tracking-tight text-soteria-ink">
+            New estimate
+          </h1>
         </div>
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="btn-secondary"
-        >
+        <button type="button" onClick={() => window.print()} className="btn-secondary">
           Print / Save PDF
         </button>
       </div>
