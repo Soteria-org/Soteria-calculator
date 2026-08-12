@@ -21,3 +21,8 @@ define('SOTERIA_DB_PASS', 'your-db-password');
 // Once you know the exact URL Vercel serves the frontend from, lock CORS
 // to it instead of leaving it open to any site:
 // define('SOTERIA_ALLOWED_ORIGIN', 'https://soteria-calculator.vercel.app');
+
+// Required before migrate.php will run. Generate with `openssl rand -hex 20`
+// (or anything else long and random) — treat it like a password, since
+// anyone who has it can run schema.sql against your live database.
+define('SOTERIA_MIGRATION_TOKEN', 'generate-a-random-string-here');
