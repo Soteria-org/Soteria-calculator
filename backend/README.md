@@ -125,10 +125,47 @@ API's URL can read and write records. `migrate.php` is the one exception
 (token-gated, since it runs schema changes rather than data changes).
 The CRUD gap is acceptable while the URL is unpublished and only your
 team knows it, but revisit before relying on this for anything sensitive.
-InfinityFree's free tier is also best-effort: expect occasional slowness
-or downtime, and (rarely) an anti-bot interstitial on requests that don't
-look like a normal browser. Fine for testing and internal use; if this
-becomes load-bearing, budget for real hosting.
+
+**InfinityFree's anti-bot challenge (confirmed, not just "rare"):**
+dispatching this workflow for real showed InfinityFree serving a
+JavaScript challenge page — not the API — to requests from GitHub
+Actions runner IPs. It responds with **HTTP 200**, so a plain
+`curl ... && check status code` (what an earlier version of this
+workflow did) reports success even though the body is an anti-bot
+interstitial, not JSON, and the migration silently never ran. The
+workflow's migrate step now drives a real headless browser (Playwright)
+instead of curl specifically to get past this — the challenge is a small
+inline script that sets a cookie and does a client-side redirect back to
+the same URL, which a real browser executes automatically and curl
+cannot. The step then parses the *final* response as JSON and fails
+loudly if it isn't (see `.github/scripts/verify-migration.mjs`), so a
+green run now means the migration actually ran, not just that something
+answered on port 443.
+
+This appears tied to the requester looking like a datacenter/script
+client (GitHub Actions IPs in particular), not to the domain being
+challenged universally — but that's inferred from one data point, not
+verified across many requests or IP ranges. It has two implications
+worth knowing about:
+- If you ever see `migrate.php` or the CRUD endpoints return HTML instead
+  of JSON when you test by hand, open the URL in a normal desktop browser
+  once — that executes the challenge and should let requests through
+  (from that IP) for the cookie's ~6 hour lifetime. If it keeps
+  happening, check vPanel for a bot-protection / "under attack mode"
+  setting to relax for this subdomain.
+- The frontend calls this API with `fetch()` from the *browser*, not
+  server-to-server, so real users' requests come from their own
+  (typically residential) IPs, not a datacenter range — which is
+  probably why this hasn't been reported as a problem in normal use.
+  But it hasn't been specifically load-tested against the challenge
+  either. If real users start seeing "records backend not configured"
+  or fetch failures on `/projects` without changing anything on the
+  frontend, this challenge is the first thing to check (view the network
+  request in devtools — an HTML response instead of JSON is the tell).
+
+InfinityFree's free tier is also best-effort beyond this: expect
+occasional slowness or downtime. Fine for testing and internal use; if
+this becomes load-bearing, budget for real hosting.
 
 ## Visibility into the database
 
