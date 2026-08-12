@@ -167,6 +167,33 @@ InfinityFree's free tier is also best-effort beyond this: expect
 occasional slowness or downtime. Fine for testing and internal use; if
 this becomes load-bearing, budget for real hosting.
 
+**Update — the account currently isn't resolving at all.** Two
+consecutive real dispatches of this workflow (after the fix above) got a
+*different* failure: both `migrate.php` and `clients.php` consistently
+resolved to `https://errors.infinityfree.net/errors/404/` —
+InfinityFree's own "no such site" page, not the app and not the anti-bot
+challenge. That page appears when the hostname doesn't map to a live
+account on their shared servers at all, which usually means one of:
+- **The account/subdomain was suspended.** InfinityFree's abuse system
+  can suspend free accounts that see a lot of automated/bot-like traffic
+  in a short window — plausible here, since this workflow (and earlier
+  manual testing) hit the anti-bot challenge repeatedly right before this
+  started happening.
+- The domain/subdomain was never fully provisioned, or DNS hasn't
+  finished propagating.
+- `INFINITYFREE_API_URL` doesn't match the actual hosting domain anymore
+  (e.g. it changed in vPanel).
+
+This isn't something CI can fix or work around — a 404 at the account
+level means there's no server-side code to reach, regardless of what the
+request looks like. **Next step is manual**: log into InfinityFree's
+vPanel, confirm the account/website status is "Active" (not suspended),
+confirm the domain listed there still matches `INFINITYFREE_API_URL`,
+and open the site's homepage in a normal browser to see what it actually
+shows. Only re-run this workflow (or hit the URL by hand) after that's
+confirmed — repeating automated requests against a suspended account is
+more likely to prolong a suspension than fix one.
+
 ## Visibility into the database
 
 Two options, depending on what you need:
