@@ -52,6 +52,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Job-level env so the migrate step's `if:` can reference these —
+    # the `secrets` context isn't accessible directly inside a step's
+    # `if:` condition, only `env` is.
+    env:
+      INFINITYFREE_API_URL: ${{ secrets.INFINITYFREE_API_URL }}
+      INFINITYFREE_MIGRATION_TOKEN: ${{ secrets.INFINITYFREE_MIGRATION_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -98,10 +104,10 @@ jobs:
             **/.git*
 
       - name: Apply schema (migrate.php)
-        if: ${{ secrets.INFINITYFREE_API_URL != '' && secrets.INFINITYFREE_MIGRATION_TOKEN != '' }}
+        if: ${{ env.INFINITYFREE_API_URL != '' && env.INFINITYFREE_MIGRATION_TOKEN != '' }}
         env:
-          API_URL: ${{ secrets.INFINITYFREE_API_URL }}
-          TOKEN: ${{ secrets.INFINITYFREE_MIGRATION_TOKEN }}
+          API_URL: ${{ env.INFINITYFREE_API_URL }}
+          TOKEN: ${{ env.INFINITYFREE_MIGRATION_TOKEN }}
         run: |
           response=$(curl -sS -w "\n%{http_code}" -G "$API_URL/migrate.php" --data-urlencode "token=$TOKEN")
           status="${response##*$'\n'}"
