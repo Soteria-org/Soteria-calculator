@@ -40,6 +40,14 @@ name: Deploy backend to InfinityFree
 #
 # If INFINITYFREE_API_URL isn't set yet, the migrate step is skipped
 # (not failed) so the FTP deploy still works while you're getting set up.
+#
+# The migrate step runs through a real headless browser (Playwright), not
+# curl. InfinityFree serves a JS anti-bot challenge page to some requests —
+# reliably to GitHub Actions runner IPs — instead of the real PHP response.
+# curl can't clear that (it doesn't execute JS), and worse, the challenge
+# page itself returns HTTP 200, so a plain curl + status check reports
+# false success while migrate.php silently never ran. See
+# .github/scripts/verify-migration.mjs.
 
 on:
   push:
@@ -103,17 +111,21 @@ jobs:
             **/config.local.php.example
             **/.git*
 
-      - name: Apply schema (migrate.php)
+      - name: Setup Node (for the migration-verification browser)
+        if: ${{ env.INFINITYFREE_API_URL != '' && env.INFINITYFREE_MIGRATION_TOKEN != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright + Chromium
+        if: ${{ env.INFINITYFREE_API_URL != '' && env.INFINITYFREE_MIGRATION_TOKEN != '' }}
+        run: |
+          npm install --no-save playwright@1.47.0
+          npx playwright install --with-deps chromium
+
+      - name: Apply schema (migrate.php) and verify the API is reachable
         if: ${{ env.INFINITYFREE_API_URL != '' && env.INFINITYFREE_MIGRATION_TOKEN != '' }}
         env:
           API_URL: ${{ env.INFINITYFREE_API_URL }}
           TOKEN: ${{ env.INFINITYFREE_MIGRATION_TOKEN }}
-        run: |
-          response=$(curl -sS -w "\n%{http_code}" -G "$API_URL/migrate.php" --data-urlencode "token=$TOKEN")
-          status="${response##*$'\n'}"
-          body="${response%$'\n'*}"
-          echo "$body"
-          if [ "$status" != "200" ]; then
-            echo "migrate.php returned HTTP $status"
-            exit 1
-          fi
+        run: node .github/scripts/verify-migration.mjs
