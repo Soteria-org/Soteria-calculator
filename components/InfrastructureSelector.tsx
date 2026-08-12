@@ -23,7 +23,7 @@ export function InfrastructureSelector({
 
   return (
     <section className="card p-5">
-      <h2 className="text-base font-semibold text-slate-900">
+      <h2 className="text-base font-semibold text-soteria-ink">
         3. Infrastructure
       </h2>
       <p className="field-hint mb-4">
@@ -36,7 +36,7 @@ export function InfrastructureSelector({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-200 text-xs uppercase text-slate-500">
+            <tr className="border-b border-soteria-border text-xs uppercase tracking-wide text-soteria-muted">
               <th className="py-2 pr-3"></th>
               <th className="py-2 pr-3">Service</th>
               <th className="py-2 pr-3">Provider price</th>
@@ -49,35 +49,40 @@ export function InfrastructureSelector({
             {infrastructureCatalogue.map((item) => (
               <tr
                 key={item.id}
-                className={`border-b border-slate-100 ${
-                  selected.has(item.id) ? "bg-soteria-accentSoft" : ""
+                className={`border-b border-soteria-border ${
+                  selected.has(item.id) ? "bg-soteria-tealSoft" : ""
                 }`}
               >
                 <td className="py-2 pr-3">
                   <input
                     type="checkbox"
+                    className="accent-soteria-teal"
                     checked={selected.has(item.id)}
                     onChange={() => onToggle(item.id)}
                   />
                 </td>
                 <td className="py-2 pr-3">
-                  <span className="block font-medium text-slate-800">
+                  <span className="block font-medium text-soteria-ink">
                     {item.service}
                   </span>
-                  <span className="block text-xs text-slate-500">
+                  <span className="block text-xs text-soteria-muted">
                     {item.provider} · {item.plan}
                   </span>
                 </td>
-                <td className="py-2 pr-3">
+                <td className="py-2 pr-3 text-soteria-body">
                   {item.providerPrice} {item.currency}
                 </td>
-                <td className="py-2 pr-3 capitalize">{item.billing}</td>
-                <td className="py-2 pr-3">{treatmentLabel[item.costTreatment]}</td>
-                <td className="py-2 pr-3 text-xs text-slate-500">
+                <td className="py-2 pr-3 capitalize text-soteria-body">
+                  {item.billing}
+                </td>
+                <td className="py-2 pr-3 text-soteria-body">
+                  {treatmentLabel[item.costTreatment]}
+                </td>
+                <td className="py-2 pr-3 text-xs text-soteria-muted">
                   <span
                     className={
                       item.source.startsWith("PLACEHOLDER")
-                        ? "chip border-soteria-warn text-soteria-warn"
+                        ? "chip border-soteria-warn/40 bg-soteria-warnSoft text-soteria-warn"
                         : ""
                     }
                   >

@@ -108,3 +108,22 @@ Once a handful of real projects have logged actual hours against their
 estimated hours, `config/development-pricing.ts` should be revised using
 that evidence instead of the initial estimates. This calculator doesn't
 capture actuals yet — see `docs/roadmap.md`.
+
+## 9. Saved quotes are frozen, never recomputed
+
+When a quote is saved (`backend/quotes.php`), it stores the *exact*
+`ProjectInput` and `EstimateResult` that `calculateEstimate` produced at
+that moment — not a reference to the current config. If `config/*.ts`
+changes next week (a feature's price goes up, the contingency percent
+changes), every quote saved before that change must keep showing its
+original numbers. A client who accepted a quote at UGX 900,000 should
+never see it silently become UGX 950,000 because Soteria's pricing rules
+moved. `backend/` enforces this by construction — it has no pricing logic
+of its own, only storage — but it's worth stating as a rule, not just an
+implementation detail: **the backend must never recompute a price from
+config; it only ever persists and displays what the engine already
+computed.**
+
+Invoice amounts inherit the same discipline: `deposit`/`balance`/`full`
+invoice types default to whatever the saved quote's `scenarios` already
+say, copied at invoice-creation time — not looked up dynamically.

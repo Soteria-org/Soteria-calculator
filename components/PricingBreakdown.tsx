@@ -18,11 +18,11 @@ interface PricingBreakdownProps {
  */
 export function PricingBreakdown({ result, view }: PricingBreakdownProps) {
   return (
-    <section className="card p-5">
-      <h2 className="text-base font-semibold text-slate-900">
+    <section className="card p-5 print:border-slate-200 print:bg-white">
+      <h2 className="text-base font-semibold text-soteria-ink print:text-slate-900">
         How we got here
       </h2>
-      <p className="field-hint mb-4">
+      <p className="field-hint mb-4 print:text-slate-500">
         {view === "client"
           ? "Development scope and price, item by item."
           : "Full internal breakdown, including cost and margin."}
@@ -31,51 +31,65 @@ export function PricingBreakdown({ result, view }: PricingBreakdownProps) {
       <table className="w-full text-sm">
         <tbody>
           {result.lineItems.map((li) => (
-            <tr key={li.id} className="border-b border-slate-100">
-              <td className="py-1.5 text-slate-700">{li.label}</td>
+            <tr
+              key={li.id}
+              className="border-b border-soteria-border print:border-slate-100"
+            >
+              <td className="py-1.5 text-soteria-body print:text-slate-700">
+                {li.label}
+              </td>
               {view === "internal" && (
-                <td className="py-1.5 text-right text-xs text-slate-400">
+                <td className="py-1.5 text-right text-xs text-soteria-faint print:text-slate-400">
                   {li.hours}h
                 </td>
               )}
-              <td className="py-1.5 text-right font-medium text-slate-800">
+              <td className="py-1.5 text-right font-medium text-soteria-ink print:text-slate-800">
                 {formatUgx(li.amountUgx)}
               </td>
             </tr>
           ))}
-          <tr className="border-b border-slate-100">
-            <td className="py-1.5 text-slate-500" colSpan={view === "internal" ? 2 : 1}>
+          <tr className="border-b border-soteria-border print:border-slate-100">
+            <td
+              className="py-1.5 text-soteria-muted print:text-slate-500"
+              colSpan={view === "internal" ? 2 : 1}
+            >
               Subtotal
             </td>
-            <td className="py-1.5 text-right text-slate-600">
+            <td className="py-1.5 text-right text-soteria-body print:text-slate-600">
               {formatUgx(result.subtotalUgx)}
             </td>
           </tr>
-          <tr className="border-b border-slate-100">
-            <td className="py-1.5 text-slate-500" colSpan={view === "internal" ? 2 : 1}>
+          <tr className="border-b border-soteria-border print:border-slate-100">
+            <td
+              className="py-1.5 text-soteria-muted print:text-slate-500"
+              colSpan={view === "internal" ? 2 : 1}
+            >
               Complexity adjustment
             </td>
-            <td className="py-1.5 text-right text-slate-600">
+            <td className="py-1.5 text-right text-soteria-body print:text-slate-600">
               {result.complexityAdjustmentUgx >= 0 ? "+" : ""}
               {formatUgx(result.complexityAdjustmentUgx)}
             </td>
           </tr>
-          <tr className="border-b border-slate-200">
-            <td className="py-1.5 text-slate-500" colSpan={view === "internal" ? 2 : 1}>
+          <tr className="border-b border-soteria-border print:border-slate-200">
+            <td
+              className="py-1.5 text-soteria-muted print:text-slate-500"
+              colSpan={view === "internal" ? 2 : 1}
+            >
               Contingency
             </td>
-            <td className="py-1.5 text-right text-slate-600">
+            <td className="py-1.5 text-right text-soteria-body print:text-slate-600">
               +{formatUgx(result.contingencyUgx)}
             </td>
           </tr>
           <tr>
             <td
-              className="py-2 font-semibold text-slate-900"
+              className="py-2 font-semibold text-soteria-ink print:text-slate-900"
               colSpan={view === "internal" ? 2 : 1}
             >
               Recommended development price
             </td>
-            <td className="py-2 text-right text-lg font-bold text-soteria-accent">
+            <td className="py-2 text-right text-lg font-bold text-soteria-gold print:text-amber-700">
               {formatUgx(result.recommendedPriceUgx)}
             </td>
           </tr>
@@ -83,25 +97,33 @@ export function PricingBreakdown({ result, view }: PricingBreakdownProps) {
       </table>
 
       {view === "internal" && (
-        <div className="mt-4 rounded-md border border-soteria-warn/40 bg-soteria-warnSoft p-3 text-sm">
-          <p className="font-semibold text-soteria-warn">Internal only — never show to client</p>
-          <div className="mt-1 grid grid-cols-2 gap-2 text-slate-700 sm:grid-cols-4">
+        <div className="mt-4 rounded-md border border-soteria-warn/40 bg-soteria-warnSoft p-3 text-sm print:border-rose-200 print:bg-rose-50">
+          <p className="font-semibold text-soteria-warn print:text-rose-700">
+            Internal only — never show to client
+          </p>
+          <div className="mt-1 grid grid-cols-2 gap-2 text-soteria-body sm:grid-cols-4 print:text-slate-700">
             <div>
-              <p className="text-xs text-slate-500">Estimated hours</p>
+              <p className="text-xs text-soteria-muted print:text-slate-500">
+                Estimated hours
+              </p>
               <p className="font-medium">{result.estimatedHours}h</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Internal cost</p>
+              <p className="text-xs text-soteria-muted print:text-slate-500">
+                Internal cost
+              </p>
               <p className="font-medium">{formatUgx(result.internalCostUgx)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Margin</p>
+              <p className="text-xs text-soteria-muted print:text-slate-500">Margin</p>
               <p className="font-medium">
                 {formatPercent(result.marginCheckPercent, 1)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-500">Price vs. cost</p>
+              <p className="text-xs text-soteria-muted print:text-slate-500">
+                Price vs. cost
+              </p>
               <p className="font-medium">
                 {formatUgx(result.recommendedPriceUgx - result.internalCostUgx)}{" "}
                 gross

@@ -22,13 +22,18 @@ calculation engine, and a form that shows its work.
 6. Switch to **Client view** before printing/sharing a quote: internal cost,
    margin, and hourly rate never render in that mode. That's a hard rule, not
    a style choice — see `docs/pricing-model.md`.
+7. Optionally **save a quote** against a client/project, then track it through
+   an **invoice** (deposit/balance/full/maintenance/custom), record **partial
+   payments** with what each one covers, and get an auto-issued **receipt**
+   per payment — plus a one-click **download of a project's full record**
+   (every quote, invoice, payment, and receipt) as JSON. See `backend/`.
 
 ## What V1 deliberately does not do yet
 
-No clients/projects register, no quotes/invoices/receipts, no payment
-tracking, no dashboard, no persistence beyond the current session. Those are
-the Day 2 / Day 3 layers described in `docs/roadmap.md` — building them
-before the calculator itself was solid would have been the wrong order.
+Change requests, a financial ledger, project profitability/estimate-vs-actual
+reporting, renewal tracking, and presets/templates — the Day 3 layer
+described in `docs/roadmap.md`. The calculator itself still requires no setup
+to use; saving records is opt-in and needs the separate backend below.
 
 ## Project structure
 
@@ -36,6 +41,7 @@ before the calculator itself was solid would have been the wrong order.
 app/                  Next.js routes (App Router)
   page.tsx            Landing page
   calculator/page.tsx The calculator itself — one page, live-updating
+  projects/            Saved projects: list, detail, printable invoices/receipts
 components/           UI only. No pricing math lives here.
 config/               Soteria's pricing policy, as data, not code.
   pricing-rules.ts        margin, deposit, contingency, complexity multipliers, FX rates
@@ -47,6 +53,9 @@ lib/
   calculator-engine.test.ts automated tests for the math above
   types.ts                 shared vocabulary between config, engine, and UI
   currency.ts, format.ts   small, boring helpers
+  records-types.ts, api-client.ts  shapes and client for the records backend
+backend/               Separate PHP + MySQL API: quotes, invoices, payments,
+                       receipts. Dumb storage only — see backend/README.md
 docs/                  Source of truth for *why*, not just *what*
 ```
 
@@ -59,7 +68,13 @@ npm test         # calculation engine tests (vitest)
 npm run build    # production build / type check
 ```
 
-No database, no environment variables, no backend required.
+The calculator itself needs no database, environment variables, or backend.
+
+**Saving quotes, invoices, payments, and receipts** needs the separate PHP +
+MySQL API in `backend/` running (e.g. under XAMPP — see `backend/README.md`)
+and `NEXT_PUBLIC_API_BASE_URL` set (copy `.env.local.example` to
+`.env.local`). Without it, `/projects` shows a clear "not configured"
+message and the calculator itself is unaffected.
 
 ## Editing the pricing rules
 
@@ -93,6 +108,6 @@ six months from now someone can tell you *why* a number is what it is.
 
 ## Next (see docs/roadmap.md)
 
-Day 2: clients/projects register, quotes, invoices, payments, receipts,
-change requests, financial ledger, exports. Day 3: dashboard, project
-profitability, estimate-vs-actual, renewal tracking, presets/templates.
+Day 3: dashboard, project profitability, estimate-vs-actual, renewal
+tracking, presets/templates. Change requests and a proper financial ledger
+are the remaining Day 2 pieces.

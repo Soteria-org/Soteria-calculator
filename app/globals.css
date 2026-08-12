@@ -2,28 +2,136 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Soteria's brand palette (teal/navy/gold/charcoal, from the Bloom brand
+ * kit) as CSS custom properties, so the same Tailwind class (e.g.
+ * `bg-soteria-surface`) resolves to a different colour depending on
+ * whether `.dark` is present on <html>. Colours that ever need an opacity
+ * modifier in a class (e.g. `border-soteria-gold/40`) are stored as
+ * space-separated RGB channels; colours that already carry their own
+ * alpha (the `*Soft` washes, borders) are stored as full rgba() strings.
+ *
+ * Light is the default (no class needed) — the toggle in
+ * components/ThemeToggle.tsx adds/removes `.dark` on <html>, and the
+ * inline script in app/layout.tsx applies the saved/system preference
+ * before first paint to avoid a flash.
+ */
+:root {
+  color-scheme: light;
+
+  --soteria-bg: 247 248 249;
+  --soteria-surface: 255 255 255;
+  --soteria-surfaceHover: 241 243 244;
+  --soteria-ink: 15 23 42;
+  --soteria-body: 51 65 85;
+  --soteria-muted: 100 116 139;
+  --soteria-faint: 148 163 184;
+  --soteria-navy: 21 58 95;
+  --soteria-navyLight: 31 80 129;
+  --soteria-teal: 11 98 100;
+  --soteria-tealLight: 8 79 80;
+  --soteria-gold: 138 106 52;
+  --soteria-goldLight: 107 79 36;
+  --soteria-warn: 179 63 43;
+
+  --soteria-border: rgba(15, 23, 42, 0.1);
+  --soteria-borderStrong: rgba(15, 23, 42, 0.18);
+  --soteria-hoverWash: rgba(15, 23, 42, 0.05);
+  --soteria-navySoft: rgba(21, 58, 95, 0.08);
+  --soteria-tealSoft: rgba(11, 98, 100, 0.1);
+  --soteria-goldSoft: rgba(138, 106, 52, 0.14);
+  --soteria-warnSoft: rgba(179, 63, 43, 0.1);
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --soteria-bg: 28 29 30;
+  --soteria-surface: 36 38 40;
+  --soteria-surfaceHover: 44 47 49;
+  --soteria-ink: 255 255 255;
+  --soteria-body: 199 205 210;
+  --soteria-muted: 147 156 163;
+  --soteria-faint: 107 116 124;
+  --soteria-navy: 21 58 95;
+  --soteria-navyLight: 31 80 129;
+  --soteria-teal: 15 120 122;
+  --soteria-tealLight: 21 156 158;
+  --soteria-gold: 188 156 98;
+  --soteria-goldLight: 212 183 132;
+  --soteria-warn: 226 114 91;
+
+  --soteria-border: rgba(255, 255, 255, 0.08);
+  --soteria-borderStrong: rgba(255, 255, 255, 0.16);
+  --soteria-hoverWash: rgba(255, 255, 255, 0.05);
+  --soteria-navySoft: rgba(21, 58, 95, 0.35);
+  --soteria-tealSoft: rgba(15, 120, 122, 0.16);
+  --soteria-goldSoft: rgba(188, 156, 98, 0.14);
+  --soteria-warnSoft: rgba(226, 114, 91, 0.14);
+}
+
 html,
 body {
-  color: #0f172a;
+  background-color: rgb(var(--soteria-bg));
+  color: rgb(var(--soteria-ink));
+}
+
+::selection {
+  background-color: rgba(15, 120, 122, 0.3);
 }
 
 @layer components {
   .field-label {
-    @apply block text-sm font-medium text-slate-700 mb-1;
+    @apply mb-1 block text-sm font-medium text-soteria-body;
   }
   .field-hint {
-    @apply text-xs text-slate-500 mt-1;
+    @apply mt-1 text-xs text-soteria-muted;
   }
   .card {
-    @apply bg-white border border-slate-200 rounded-lg;
+    @apply rounded-lg border border-soteria-border bg-soteria-surface;
+  }
+  .input {
+    @apply w-full rounded-md border border-soteria-border bg-soteria-bg px-3 py-2 text-sm text-soteria-ink placeholder:text-soteria-faint focus:border-soteria-teal focus:outline-none focus:ring-1 focus:ring-soteria-teal;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-md bg-soteria-accent px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800 transition-colors;
+    @apply inline-flex items-center justify-center rounded-md bg-soteria-teal px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-soteria-tealLight;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors;
+    @apply inline-flex items-center justify-center rounded-md border border-soteria-borderStrong bg-transparent px-4 py-2 text-sm font-semibold text-soteria-ink transition-colors hover:bg-soteria-hoverWash;
   }
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600;
+    @apply inline-flex items-center gap-1 rounded-full border border-soteria-border bg-soteria-hoverWash px-2.5 py-0.5 text-xs font-medium text-soteria-muted;
+  }
+}
+
+/* The client-facing "Print / Save PDF" output is always light and
+   ink-friendly, regardless of which theme is active on screen. */
+@media print {
+  :root,
+  :root.dark {
+    color-scheme: light;
+
+    --soteria-bg: 255 255 255;
+    --soteria-surface: 255 255 255;
+    --soteria-surfaceHover: 248 250 252;
+    --soteria-ink: 15 23 42;
+    --soteria-body: 51 65 85;
+    --soteria-muted: 100 116 139;
+    --soteria-faint: 148 163 184;
+    --soteria-navy: 21 58 95;
+    --soteria-navyLight: 31 80 129;
+    --soteria-teal: 11 98 100;
+    --soteria-tealLight: 8 79 80;
+    --soteria-gold: 138 106 52;
+    --soteria-goldLight: 107 79 36;
+    --soteria-warn: 179 63 43;
+
+    --soteria-border: rgba(15, 23, 42, 0.12);
+    --soteria-borderStrong: rgba(15, 23, 42, 0.2);
+    --soteria-hoverWash: rgba(15, 23, 42, 0.05);
+    --soteria-navySoft: rgba(21, 58, 95, 0.08);
+    --soteria-tealSoft: rgba(11, 98, 100, 0.1);
+    --soteria-goldSoft: rgba(138, 106, 52, 0.14);
+    --soteria-warnSoft: rgba(179, 63, 43, 0.1);
   }
 }
