@@ -61,14 +61,31 @@ you never hand-edit files over FTP and let them drift from the repo.
    password it shows you.
 4. Open phpMyAdmin from vPanel, select that database, and import
    `schema.sql` (Import tab → choose file → Go).
-5. In vPanel's FTP Accounts section, note the FTP host, username, and
-   password. Decide where `backend/` should live under `htdocs/` — e.g.
-   `/htdocs/soteria-api/` — and create that folder if it doesn't exist.
+5. In vPanel's FTP Accounts section, get FTP credentials and figure out
+   `INFINITYFREE_FTP_SERVER_DIR` — this trips people up because
+   InfinityFree gives you two different kinds of FTP account with
+   different home directories:
+   - Your **main/default FTP account** (created automatically at signup)
+     logs in at the *account root*, which contains `htdocs/` alongside
+     other folders — its home directory is **not** the web root. With
+     this account, `INFINITYFREE_FTP_SERVER_DIR` must be the full path
+     down into where the API should live, e.g. `/htdocs/soteria-api/`.
+   - A **scoped "additional FTP account"** (click **Add FTP Account** in
+     vPanel and pick a directory, e.g. `htdocs/soteria-api`) logs in with
+     its home directory already set to that folder. With this account,
+     `INFINITYFREE_FTP_SERVER_DIR` is just `/`.
+
+   Use a scoped account if you can — it keeps this API isolated from
+   anything else you host on the same account, and makes the server-dir
+   question trivial. Not sure which kind you have? Connect with an FTP
+   client (FileZilla) and look at the path after login: if `htdocs` is
+   visible as a folder, you're in the main-account case; if you land
+   inside what looks like the target folder directly, you're scoped.
 6. In this GitHub repo, go to **Settings → Secrets and variables →
    Actions** and add:
    - `INFINITYFREE_FTP_HOST`, `INFINITYFREE_FTP_USERNAME`,
-     `INFINITYFREE_FTP_PASSWORD`, `INFINITYFREE_FTP_SERVER_DIR`
-     (e.g. `/htdocs/soteria-api/`)
+     `INFINITYFREE_FTP_PASSWORD`, `INFINITYFREE_FTP_SERVER_DIR` (from
+     step 5 — `/htdocs/soteria-api/` or `/`, depending on account type)
    - `INFINITYFREE_DB_HOST`, `INFINITYFREE_DB_NAME`,
      `INFINITYFREE_DB_USER`, `INFINITYFREE_DB_PASS` (from step 3)
    - Optionally `INFINITYFREE_ALLOWED_ORIGIN` — your deployed frontend's
