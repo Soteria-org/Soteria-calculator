@@ -8,6 +8,11 @@
 // few real projects, replace these with evidence — see docs/pricing-model.md
 // §20 "Pricing intelligence".
 //
+// `keywords` on each feature are what the budget-fit assistant
+// (lib/budget-fit.ts) matches against a pasted client brief. They're
+// hand-picked, not derived from name/description — see the comment on
+// FeatureDefinition in lib/types.ts for why that distinction matters.
+//
 // Edit this file (not components) to add, price, or retire a feature.
 
 import { FeatureDefinition } from "@/lib/types";
@@ -37,6 +42,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 4,
     basePrice: 120_000,
     complexity: "low",
+    keywords: ["homepage", "landing page", "hero section", "hero"],
   },
   {
     id: "web-standard-page",
@@ -46,6 +52,15 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 2,
     basePrice: 60_000,
     complexity: "low",
+    keywords: [
+      "about us",
+      "contact us",
+      "privacy policy",
+      "terms and conditions",
+      "terms & conditions",
+      "faq",
+      "careers page",
+    ],
   },
   {
     id: "web-complex-page",
@@ -55,6 +70,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 180_000,
     complexity: "medium",
+    keywords: ["custom layout", "interactive page", "filtering"],
   },
   {
     id: "web-responsive",
@@ -64,6 +80,16 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 5,
     basePrice: 100_000,
     complexity: "low",
+    keywords: [
+      "responsive",
+      "mobile-first",
+      "mobile friendly",
+      "android",
+      "iphone",
+      "tablet",
+      "works on all devices",
+      "cross-device",
+    ],
   },
   {
     id: "web-custom-ui",
@@ -73,6 +99,15 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 12,
     basePrice: 350_000,
     complexity: "medium",
+    keywords: [
+      "modern design",
+      "professional design",
+      "high-end",
+      "premium design",
+      "custom design",
+      "not a template",
+      "bespoke",
+    ],
   },
   {
     id: "web-brand-implementation",
@@ -82,6 +117,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 4,
     basePrice: 90_000,
     complexity: "low",
+    keywords: ["brand guidelines", "logo", "brand identity", "visual identity"],
   },
   {
     id: "web-animation",
@@ -91,6 +127,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 150_000,
     complexity: "medium",
+    keywords: ["animation", "micro-interaction", "animated counter", "subtle animation"],
   },
   {
     id: "web-seo",
@@ -100,6 +137,16 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 3,
     basePrice: 70_000,
     complexity: "low",
+    keywords: [
+      "seo",
+      "sitemap",
+      "robots.txt",
+      "meta description",
+      "structured data",
+      "schema markup",
+      "open graph",
+      "canonical url",
+    ],
   },
   {
     id: "web-accessibility",
@@ -109,6 +156,14 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 4,
     basePrice: 90_000,
     complexity: "medium",
+    keywords: [
+      "accessibility",
+      "wcag",
+      "screen reader",
+      "keyboard navigation",
+      "accessible",
+      "color contrast",
+    ],
   },
 
   // --- CMS ---------------------------------------------------------------
@@ -120,6 +175,13 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 220_000,
     complexity: "medium",
+    keywords: [
+      "cms",
+      "content management",
+      "update content",
+      "edit content without a developer",
+      "non-technical staff",
+    ],
   },
   {
     id: "cms-advanced",
@@ -129,6 +191,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 16,
     basePrice: 450_000,
     complexity: "high",
+    keywords: ["structured content", "content versioning", "content types"],
   },
   {
     id: "cms-blog",
@@ -138,6 +201,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 150_000,
     complexity: "low",
+    keywords: ["blog", "news", "articles", "press releases", "news & stories"],
   },
   {
     id: "cms-media",
@@ -147,6 +211,37 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 5,
     basePrice: 120_000,
     complexity: "medium",
+    keywords: ["media library", "upload images", "image optimization", "webp", "avif"],
+  },
+  {
+    id: "cms-gallery",
+    category: "cms",
+    name: "Media gallery / albums",
+    description:
+      "Photo and video gallery organised into albums, with filtering (e.g. by project, category, or year).",
+    hours: 8,
+    basePrice: 210_000,
+    complexity: "medium",
+    keywords: ["gallery", "photo gallery", "video gallery", "albums", "photos and videos"],
+  },
+  {
+    id: "cms-reports-library",
+    category: "cms",
+    name: "Reports & publications library",
+    description:
+      "Document library for downloadable files (annual reports, policies, newsletters) with title/category/year metadata.",
+    hours: 6,
+    basePrice: 160_000,
+    complexity: "medium",
+    keywords: [
+      "reports & publications",
+      "annual report",
+      "financial report",
+      "publications",
+      "document library",
+      "downloadable documents",
+      "strategic plan",
+    ],
   },
   {
     id: "cms-page-builder",
@@ -156,6 +251,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 20,
     basePrice: 550_000,
     complexity: "high",
+    keywords: ["page builder", "drag and drop", "block-based editor"],
   },
   {
     id: "cms-dashboard",
@@ -165,6 +261,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 280_000,
     complexity: "medium",
+    keywords: ["admin panel", "cms dashboard", "manage content"],
   },
 
   // --- Authentication ------------------------------------------------------
@@ -176,6 +273,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 150_000,
     complexity: "medium",
+    keywords: ["login", "sign up", "authentication", "secure authentication", "admin login"],
   },
   {
     id: "auth-social-google",
@@ -186,6 +284,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 80_000,
     complexity: "medium",
     dependsOn: ["auth-email-password"],
+    keywords: ["google login", "sign in with google"],
   },
   {
     id: "auth-social-microsoft",
@@ -196,6 +295,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 80_000,
     complexity: "medium",
     dependsOn: ["auth-email-password"],
+    keywords: ["microsoft login", "sign in with microsoft"],
   },
   {
     id: "auth-magic-link",
@@ -205,6 +305,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 4,
     basePrice: 100_000,
     complexity: "medium",
+    keywords: ["magic link", "passwordless"],
   },
   {
     id: "auth-password-reset",
@@ -215,6 +316,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 70_000,
     complexity: "low",
     dependsOn: ["auth-email-password"],
+    keywords: ["password reset", "forgot password"],
   },
   {
     id: "auth-mfa",
@@ -224,6 +326,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 220_000,
     complexity: "high",
+    keywords: ["multi-factor", "two-factor", "2fa", "mfa"],
   },
   {
     id: "auth-rbac",
@@ -233,6 +336,17 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 260_000,
     complexity: "high",
+    keywords: [
+      "role-based access",
+      "admin roles",
+      "permissions",
+      "super administrator",
+      "finance officer",
+      "program manager",
+      "communications officer",
+      "volunteer coordinator",
+      "editor role",
+    ],
   },
 
   // --- Commerce ------------------------------------------------------------
@@ -244,6 +358,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 380_000,
     complexity: "medium",
+    keywords: ["product catalogue", "product listing", "shop products"],
   },
   {
     id: "commerce-variants",
@@ -254,6 +369,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 200_000,
     complexity: "high",
     dependsOn: ["commerce-catalogue"],
+    keywords: ["product variants", "size and colour options"],
   },
   {
     id: "commerce-cart-checkout",
@@ -264,6 +380,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 420_000,
     complexity: "high",
     dependsOn: ["commerce-catalogue"],
+    keywords: ["cart", "checkout", "shopping cart"],
   },
   {
     id: "commerce-orders",
@@ -274,6 +391,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 260_000,
     complexity: "medium",
     dependsOn: ["commerce-cart-checkout"],
+    keywords: ["order management", "order history", "order status"],
   },
   {
     id: "commerce-customer-accounts",
@@ -283,6 +401,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 160_000,
     complexity: "medium",
+    keywords: ["customer accounts", "customer profile"],
   },
   {
     id: "commerce-reviews",
@@ -292,6 +411,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 140_000,
     complexity: "medium",
+    keywords: ["reviews", "ratings", "testimonials on products"],
   },
   {
     id: "commerce-wishlist",
@@ -301,6 +421,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 3,
     basePrice: 70_000,
     complexity: "low",
+    keywords: ["wishlist", "save for later"],
   },
   {
     id: "commerce-coupons",
@@ -310,6 +431,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 150_000,
     complexity: "medium",
+    keywords: ["coupons", "discount codes", "promo codes"],
   },
   {
     id: "commerce-gift-cards",
@@ -319,6 +441,133 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 200_000,
     complexity: "high",
+    keywords: ["gift cards"],
+  },
+  {
+    id: "commerce-donations",
+    category: "commerce",
+    name: "Donation / fundraising system",
+    description:
+      "One-time and custom-amount donation collection with per-project or per-campaign funding progress (raised/target/percentage).",
+    hours: 16,
+    basePrice: 450_000,
+    complexity: "high",
+    dependsOn: ["int-payment-gateway"],
+    keywords: [
+      "donation",
+      "donate",
+      "donate now",
+      "fundraising",
+      "funding goal",
+      "amount raised",
+      "support this project",
+      "donation system",
+    ],
+  },
+  {
+    id: "commerce-recurring-donations",
+    category: "commerce",
+    name: "Recurring / monthly donations",
+    description: "Subscription-style recurring donations with management for the donor.",
+    hours: 10,
+    basePrice: 260_000,
+    complexity: "high",
+    dependsOn: ["commerce-donations"],
+    keywords: ["monthly donation", "recurring donation", "manage recurring donations"],
+  },
+
+  // --- Engagement (donors, volunteers, community) --------------------------
+  {
+    id: "engagement-donor-portal",
+    category: "engagement",
+    name: "Donor portal",
+    description:
+      "Donor account area: donation history, downloadable receipts, supported projects, communication preferences.",
+    hours: 14,
+    basePrice: 380_000,
+    complexity: "high",
+    dependsOn: ["auth-email-password", "commerce-donations"],
+    keywords: [
+      "donor portal",
+      "donor account",
+      "donation history",
+      "download receipts",
+      "manage recurring donations",
+    ],
+  },
+  {
+    id: "engagement-volunteer-system",
+    category: "engagement",
+    name: "Volunteer application system",
+    description:
+      "Volunteer registration form plus an admin pipeline for reviewing applications (new → shortlisted → accepted, etc.).",
+    hours: 10,
+    basePrice: 260_000,
+    complexity: "medium",
+    keywords: [
+      "volunteer",
+      "volunteer registration",
+      "volunteer application",
+      "volunteer coordinator",
+      "application status",
+    ],
+  },
+  {
+    id: "engagement-events",
+    category: "engagement",
+    name: "Events with registration",
+    description: "Event listings with date/location/description and visitor registration/RSVP.",
+    hours: 10,
+    basePrice: 260_000,
+    complexity: "medium",
+    keywords: ["events", "event registration", "rsvp", "event calendar"],
+  },
+  {
+    id: "engagement-testimonials",
+    category: "engagement",
+    name: "Success stories / testimonials",
+    description:
+      "Structured story entries (beneficiary, before/after, photo/video, program) with a story detail page.",
+    hours: 6,
+    basePrice: 150_000,
+    complexity: "medium",
+    keywords: [
+      "success stories",
+      "stories of change",
+      "testimonials",
+      "before/after",
+      "video testimonial",
+      "beneficiary story",
+    ],
+  },
+  {
+    id: "engagement-newsletter",
+    category: "engagement",
+    name: "Newsletter subscription",
+    description: "Subscribe/unsubscribe with consent and email verification, plus admin subscriber management.",
+    hours: 5,
+    basePrice: 120_000,
+    complexity: "medium",
+    dependsOn: ["int-email"],
+    keywords: ["newsletter", "subscribe", "email subscription", "subscriber management"],
+  },
+  {
+    id: "engagement-contact-inbox",
+    category: "engagement",
+    name: "Contact / inquiry inbox",
+    description:
+      "Admin inbox consolidating contact, partnership, and general inquiries with a status pipeline (new/read/in progress/resolved).",
+    hours: 6,
+    basePrice: 160_000,
+    complexity: "medium",
+    keywords: [
+      "contact management",
+      "inquiry inbox",
+      "partnership inquiry",
+      "contact messages",
+      "complaints",
+      "feedback",
+    ],
   },
 
   // --- Business management --------------------------------------------------
@@ -330,6 +579,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 380_000,
     complexity: "high",
+    keywords: ["inventory", "stock levels", "low-stock"],
   },
   {
     id: "biz-purchases-suppliers",
@@ -339,6 +589,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 260_000,
     complexity: "medium",
+    keywords: ["suppliers", "purchase orders"],
   },
   {
     id: "biz-sales-tracking",
@@ -348,6 +599,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 220_000,
     complexity: "medium",
+    keywords: ["sales tracking", "manual sales"],
   },
   {
     id: "biz-expenses",
@@ -357,6 +609,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 160_000,
     complexity: "medium",
+    keywords: ["expense tracking", "expenses"],
   },
   {
     id: "biz-reports",
@@ -366,6 +619,15 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 260_000,
     complexity: "medium",
+    keywords: [
+      "reports",
+      "dashboard reports",
+      "export to pdf",
+      "export to excel",
+      "export to csv",
+      "donations by month",
+      "donations by project",
+    ],
   },
   {
     id: "biz-dashboard",
@@ -375,6 +637,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 12,
     basePrice: 320_000,
     complexity: "medium",
+    keywords: ["admin dashboard", "operational overview", "charts and graphs", "dashboard reports"],
   },
   {
     id: "biz-staff-management",
@@ -385,6 +648,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 210_000,
     complexity: "medium",
     dependsOn: ["auth-rbac"],
+    keywords: ["staff management", "team management"],
   },
 
   // --- Integrations ----------------------------------------------------------
@@ -397,6 +661,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     basePrice: 550_000,
     complexity: "high",
     notes: "Historically underestimated — see docs/pricing-model.md before quoting a tight deadline.",
+    keywords: ["payment gateway", "visa", "mastercard", "paypal", "card payments", "secure payment"],
   },
   {
     id: "int-mobile-money",
@@ -406,6 +671,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 400_000,
     complexity: "high",
+    keywords: ["mtn mobile money", "airtel money", "mobile money"],
   },
   {
     id: "int-email",
@@ -415,6 +681,13 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 5,
     basePrice: 120_000,
     complexity: "medium",
+    keywords: [
+      "transactional email",
+      "confirmation email",
+      "email notifications",
+      "email templates",
+      "donation confirmation email",
+    ],
   },
   {
     id: "int-sms",
@@ -424,6 +697,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 150_000,
     complexity: "medium",
+    keywords: ["sms", "sms notifications", "text message notifications"],
   },
   {
     id: "int-whatsapp",
@@ -433,6 +707,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 220_000,
     complexity: "high",
+    keywords: ["whatsapp", "whatsapp button", "whatsapp business"],
   },
   {
     id: "int-maps",
@@ -442,6 +717,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 5,
     basePrice: 130_000,
     complexity: "medium",
+    keywords: ["google maps", "location map", "map integration"],
   },
   {
     id: "int-analytics",
@@ -451,6 +727,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 3,
     basePrice: 80_000,
     complexity: "low",
+    keywords: ["analytics", "google analytics", "ga4", "meta pixel", "traffic sources", "conversion tracking"],
   },
   {
     id: "int-shipping",
@@ -460,6 +737,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 280_000,
     complexity: "high",
+    keywords: ["shipping", "delivery integration", "logistics"],
   },
   {
     id: "int-accounting",
@@ -469,6 +747,17 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 400_000,
     complexity: "high",
+    keywords: ["accounting integration", "bookkeeping sync"],
+  },
+  {
+    id: "int-backup",
+    category: "integrations",
+    name: "Automated backups",
+    description: "Scheduled backups of the database and uploaded media/documents, stored separately from the primary server.",
+    hours: 4,
+    basePrice: 110_000,
+    complexity: "medium",
+    keywords: ["backups", "automatic backups", "database backup", "disaster recovery"],
   },
   {
     id: "int-external-api",
@@ -478,6 +767,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 260_000,
     complexity: "high",
+    keywords: ["third-party api", "external integration"],
   },
 
   // --- AI --------------------------------------------------------------------
@@ -489,6 +779,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 280_000,
     complexity: "high",
+    keywords: ["ai content generation", "ai-assisted content"],
   },
   {
     id: "ai-product-descriptions",
@@ -498,6 +789,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 6,
     basePrice: 180_000,
     complexity: "medium",
+    keywords: ["ai product descriptions"],
   },
   {
     id: "ai-chatbot",
@@ -507,6 +799,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 24,
     basePrice: 700_000,
     complexity: "high",
+    keywords: ["chatbot", "ai assistant", "conversational assistant"],
   },
   {
     id: "ai-recommendations",
@@ -516,6 +809,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 18,
     basePrice: 500_000,
     complexity: "high",
+    keywords: ["ai recommendations", "recommendation engine"],
   },
   {
     id: "ai-analytics",
@@ -525,6 +819,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 400_000,
     complexity: "high",
+    keywords: ["ai-assisted analytics", "ai insights"],
   },
   {
     id: "ai-image-generation",
@@ -534,6 +829,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 240_000,
     complexity: "medium",
+    keywords: ["ai image generation"],
   },
 
   // --- Advanced ----------------------------------------------------------------
@@ -545,6 +841,32 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 8,
     basePrice: 210_000,
     complexity: "medium",
+    keywords: [
+      "notifications",
+      "admin notifications",
+      "new donation notification",
+      "new volunteer application notification",
+    ],
+  },
+  {
+    id: "adv-search",
+    category: "advanced",
+    name: "Site-wide search",
+    description: "Search across multiple content types (e.g. news, projects, programs, reports, FAQs) with relevance ranking.",
+    hours: 6,
+    basePrice: 170_000,
+    complexity: "medium",
+    keywords: ["site search", "global search", "search functionality"],
+  },
+  {
+    id: "adv-audit-log",
+    category: "advanced",
+    name: "Admin activity / audit log",
+    description: "Records who changed what and when across admin actions.",
+    hours: 5,
+    basePrice: 140_000,
+    complexity: "medium",
+    keywords: ["audit log", "activity log", "admin activity logs", "every administrator action should be logged"],
   },
   {
     id: "adv-api-integration",
@@ -554,6 +876,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 14,
     basePrice: 400_000,
     complexity: "high",
+    keywords: ["public api", "rest api", "graphql api", "api documentation"],
   },
   {
     id: "adv-multi-language",
@@ -563,6 +886,7 @@ export const developmentFeatures: FeatureDefinition[] = [
     hours: 10,
     basePrice: 280_000,
     complexity: "high",
+    keywords: ["multi-language", "multilingual", "translations", "i18n"],
   },
 ];
 
